@@ -4,16 +4,6 @@
 // Copyright (c) 2017, 2020, Oracle and/or its affiliates. All rights reserved.
 // Licensed under the Mozilla Public License v2.0
 
-#brztechcloud01
-tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaakankmz2x3rclvsqfxvro7f6iar2cowvb6inb7pe5th7fmxthrigq"
-
-#oracleidentitycloudservice/vitor.pinto@oracle.com
-user_ocid        = "ocid1.user.oc1..aaaaaaaa7pbbpakvbyqu4msizhkxotbvpmp2rqevpd7bjutz2slr574sh5vq"
-
-fingerprint      = "bc:f7:fb:03:88:3d:14:48:01:d3:ee:d8:06:9b:0a:ec"
-private_key_path = "C:/Users/vitorp/Desktop/SSH/API/apikey"
-token            ="c<vj0;5!_gco5Dnk3>WH"
-ssh_public_key   ="ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr+LqZXg2RP2JBz+BLu4U99LHtTf8kLST7yVa8JKI3d+s/efT76qhPItvc/y3I514FivRs3Vu+iaZXvaZOMJW/PmVelEh9N39tqSNqs4wHi+fT8BRfaEG9XsL6iniOHNuT4jLRbDZhg6Hr16/vHDo7kRDVYzuQoyvFx0ONj/XEDGuHfJ0NdRifNmVLSfkNnDsPmAqwDM2K1GDuGbht55LgY8jmO9l0iD9vmeE01dQV2O1LVk5modyiRT6/0VF56oKQe7JEQYvgvM2Xe9MkVYMheOk5rLzNsIxwvMJ+eUmEmBM4VM7gGJezAVJbICXfY+0J/rVVltZU37IKBMe12rpxw== rsa-key-20210112"
 
 variable "compartment_ocid" {
     #vitor_pinto/advanced_networks
@@ -67,18 +57,33 @@ data "oci_identity_availability_domain" "ad" {
     ad_number       = "1"
 }
 
+variable "tenancy_ocid" {
+  #brztechcloud01
+  default = "ocid1.tenancy.oc1..aaaaaaaakankmz2x3rclvsqfxvro7f6iar2cowvb6inb7pe5th7fmxthrigq"
 
-variable "tenancy_ocid" {}
+}
 
-variable "user_ocid" {}
+variable "user_ocid" {
+  #oracleidentitycloudservice/vitor.pinto@oracle.com
+  default = "ocid1.user.oc1..aaaaaaaa7pbbpakvbyqu4msizhkxotbvpmp2rqevpd7bjutz2slr574sh5vq"
 
-variable "fingerprint" {}
+}
 
-variable "private_key_path" {}
+variable "fingerprint" {
+  default = "bc:f7:fb:03:88:3d:14:48:01:d3:ee:d8:06:9b:0a:ec"
+}
 
-variable "token" {}
+variable "private_key_path" {
+  default = "C:/Users/vitorp/Desktop/SSH/API/apikey"
+}
 
-variable "ssh_public_key" {}
+variable "token" {
+  default = "c<vj0;5!_gco5Dnk3>WH"
+}
+
+variable "ssh_public_key" {
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAr+LqZXg2RP2JBz+BLu4U99LHtTf8kLST7yVa8JKI3d+s/efT76qhPItvc/y3I514FivRs3Vu+iaZXvaZOMJW/PmVelEh9N39tqSNqs4wHi+fT8BRfaEG9XsL6iniOHNuT4jLRbDZhg6Hr16/vHDo7kRDVYzuQoyvFx0ONj/XEDGuHfJ0NdRifNmVLSfkNnDsPmAqwDM2K1GDuGbht55LgY8jmO9l0iD9vmeE01dQV2O1LVk5modyiRT6/0VF56oKQe7JEQYvgvM2Xe9MkVYMheOk5rLzNsIxwvMJ+eUmEmBM4VM7gGJezAVJbICXfY+0J/rVVltZU37IKBMe12rpxw== rsa-key-20210112"
+}
 
 
 provider "oci" {
