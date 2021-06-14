@@ -42,6 +42,11 @@ resource "oci_core_route_table" "privateRT3" {
         network_entity_id   = oci_core_local_peering_gateway.lpg3.id
         destination          = oci_core_vcn.vcn4.cidr_blocks[0]
     }
+
+    route_rules {
+        network_entity_id   = data.oci_core_private_ips.pfsense-ip2.private_ips[0].id
+        destination         = "0.0.0.0/0"
+    }
 }
 
 resource "oci_core_route_table" "lpg3_RT" {
@@ -94,7 +99,7 @@ resource "oci_core_subnet" "publicsubnet3" {
     compartment_id      = var.compartment_ocid
     vcn_id              = oci_core_vcn.vcn3.id
     display_name        = "PublicSubnet3"
-    route_table_id      = oci_core_route_table.publicRT3.id
+    #route_table_id      = oci_core_route_table.publicRT3.id
     security_list_ids   = [oci_core_security_list.publicSL3.id]
 }
 
@@ -109,12 +114,20 @@ resource "oci_core_subnet" "privatesubnet3" {
 }
 
 
-resource "oci_core_route_table_attachment" "route_table3_attachment" {
+resource "oci_core_route_table_attachment" "route_table3_priv_attachment" {
   //dependancy on the vnic attachment
   depends_on = [oci_core_vnic_attachment.pfsense_vnic2]
   
   subnet_id = oci_core_subnet.privatesubnet3.id
   route_table_id = oci_core_route_table.privateRT3.id
+}
+
+resource "oci_core_route_table_attachment" "route_table3_public_attachment" {
+  //dependancy on the vnic attachment
+  depends_on = [oci_core_vnic_attachment.pfsense_vnic2]
+  
+  subnet_id = oci_core_subnet.publicsubnet3.id
+  route_table_id = oci_core_route_table.publicRT3.id
 }
 
 ########################################################
@@ -212,7 +225,7 @@ resource "oci_core_local_peering_gateway" "lpg3" {
     vcn_id          = oci_core_vcn.vcn3.id
 
     display_name    = "LPG3-LPG4"
-    #route_table_id  = oci_core_route_table.lpg3_RT.id
+    route_table_id  = oci_core_route_table.lpg3_RT.id
 }
 
 resource "oci_core_local_peering_gateway" "lpg4" {  

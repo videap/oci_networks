@@ -1,28 +1,28 @@
-# resource "oci_core_instance" "VM1-Public" {
-#     availability_domain     = data.oci_identity_availability_domain.ad.name
-#     compartment_id          = var.compartment_ocid
-#     shape                   = var.instance_shape
-#     display_name            = "VM-Public-vcn1"
-#     preserve_boot_volume    = false
+resource "oci_core_instance" "VM1-Public" {
+    availability_domain     = data.oci_identity_availability_domain.ad.name
+    compartment_id          = var.compartment_ocid
+    shape                   = var.instance_shape
+    display_name            = "VM-Public-vcn1"
+    preserve_boot_volume    = false
 
-#     create_vnic_details {
-#         assign_public_ip    = "true"
-#         subnet_id           = oci_core_subnet.publicsubnet1.id
-#     }
+    create_vnic_details {
+        assign_public_ip    = "true"
+        subnet_id           = oci_core_subnet.publicsubnet1.id
+    }
 
-#     #shape_config {
-#     #    memory_in_gbs   = "1"
-#     #    ocpus           = "1"
-#     #}
-#     metadata = {
-#         ssh_authorized_keys = var.ssh_public_key
-#     }
+    #shape_config {
+    #    memory_in_gbs   = "1"
+    #    ocpus           = "1"
+    #}
+    metadata = {
+        ssh_authorized_keys = var.ssh_public_key
+    }
     
-#     source_details {
-#         source_id   = var.ol_image_ocid[var.region]
-#         source_type = "image"
-#     }
-# }
+    source_details {
+        source_id   = var.ol_image_ocid[var.region]
+        source_type = "image"
+    }
+}
 
 # resource "oci_core_instance" "VM2-A-Private" {
 #    availability_domain     = data.oci_identity_availability_domain.ad.name
@@ -128,7 +128,7 @@ resource "oci_core_instance" "VM3-Public" {
     }
 }
 
-resource "oci_core_instance" "VM4-Private2" {
+resource "oci_core_instance" "VM4-Private3" {
     availability_domain     = data.oci_identity_availability_domain.ad.name
     compartment_id          = var.compartment_ocid
     shape                   = var.instance_shape
@@ -137,7 +137,7 @@ resource "oci_core_instance" "VM4-Private2" {
 
     create_vnic_details {
         assign_public_ip    = "false"
-        subnet_id           = oci_core_subnet.privatesubnet4.id
+        subnet_id           = oci_core_subnet.privatesubnet3.id
     }
 
     #shape_config {

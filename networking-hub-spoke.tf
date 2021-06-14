@@ -76,6 +76,11 @@ resource "oci_core_route_table" "publicRT1" {
         network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn3.cidr_blocks[0]
     }
+
+    route_rules {
+        network_entity_id   = oci_core_drg.drg1.id
+        destination          = oci_core_vcn.vcn4.cidr_blocks[0]
+    }
 }
 
 resource "oci_core_route_table" "publicRT2" {
@@ -205,12 +210,7 @@ resource "oci_core_security_list" "privateSL1" {
 
     ingress_security_rules {
         protocol    = "all"
-        source      = oci_core_vcn.vcn1.cidr_blocks[0]
-    }
-
-    ingress_security_rules {
-        protocol    = "all"
-        source      = oci_core_vcn.vcn2.cidr_blocks[0]
+        source      = "0.0.0.0/0"
     }
 
     egress_security_rules {
@@ -227,12 +227,7 @@ resource "oci_core_security_list" "privateSL2" {
 
     ingress_security_rules {
         protocol    = "all"
-        source      = oci_core_vcn.vcn1.cidr_blocks[0]
-    }
-
-     ingress_security_rules {
-        protocol    = "all"
-        source      = oci_core_vcn.vcn2.cidr_blocks[0]
+        source      = "0.0.0.0/0"
     }
 
     egress_security_rules {
