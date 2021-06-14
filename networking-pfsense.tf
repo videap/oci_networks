@@ -160,6 +160,12 @@ resource "oci_core_route_table" "privateRT4" {
         network_entity_id   = oci_core_local_peering_gateway.lpg4.id
         destination         = "0.0.0.0/0"
     }
+
+    route_rules {
+        destination_type = "SERVICE_CIDR_BLOCK"
+        network_entity_id   = oci_core_service_gateway.sg4.id
+        destination         = data.oci_core_services.OCI_Services.services[1].cidr_block
+    }
 }
 
 resource "oci_core_security_list" "publicSL4" {
@@ -218,6 +224,22 @@ resource "oci_core_route_table_attachment" "route_table_attachment4" {
   subnet_id = oci_core_subnet.privatesubnet4.id
   route_table_id = oci_core_route_table.privateRT4.id
 }
+
+resource "oci_core_service_gateway" "sg4" {  
+    compartment_id  = var.compartment_ocid
+    vcn_id          = oci_core_vcn.vcn4.id
+
+    display_name    = "SG4"
+    
+    services {
+        #Required
+        service_id = data.oci_core_services.OCI_Services.services[1].id
+    }
+}
+
+data "oci_core_services" "OCI_Services" {
+}
+
 
 
 resource "oci_core_local_peering_gateway" "lpg3" {
