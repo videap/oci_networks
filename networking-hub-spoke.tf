@@ -17,17 +17,6 @@ resource "oci_core_vcn" "vcn2" {
   display_name   = "vcn2-tf"
 }
 
-resource "oci_core_drg" "drg1" {
-    compartment_id  = var.compartment_ocid
-    display_name    = "DRG1"
-}
-
-resource "oci_core_drg_attachment" "drg_and_vcn1" {
-
-    drg_id = oci_core_drg.drg1.id
-    vcn_id = oci_core_vcn.vcn1.id
-}
-
 resource "oci_core_internet_gateway" "igw1" {
 
     compartment_id  = var.compartment_ocid
@@ -68,7 +57,7 @@ resource "oci_core_route_table" "publicRT1" {
     }
 
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg1.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn2.cidr_blocks[0]
     }
 
@@ -81,6 +70,7 @@ resource "oci_core_route_table" "publicRT1" {
         network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn4.cidr_blocks[0]
     }
+
 }
 
 resource "oci_core_route_table" "publicRT2" {
@@ -95,13 +85,18 @@ resource "oci_core_route_table" "publicRT2" {
     }
 
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg2.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn1.cidr_blocks[0]
     }
 
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg2.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn3.cidr_blocks[0]
+    }
+
+    route_rules {
+        network_entity_id   = oci_core_drg.drg1.id
+        destination          = oci_core_vcn.vcn4.cidr_blocks[0]
     }
 
 }
@@ -118,13 +113,18 @@ resource "oci_core_route_table" "privateRT1" {
     }
 
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg1.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn2.cidr_blocks[0]
     }
 
     route_rules {
         network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn3.cidr_blocks[0]
+    }
+
+    route_rules {
+        network_entity_id   = oci_core_drg.drg1.id
+        destination          = oci_core_vcn.vcn4.cidr_blocks[0]
     }
 }
 
@@ -140,31 +140,19 @@ resource "oci_core_route_table" "privateRT2" {
     }
     
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg2.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn1.cidr_blocks[0]
     }
 
     route_rules {
-        network_entity_id   = oci_core_local_peering_gateway.lpg2.id
+        network_entity_id   = oci_core_drg.drg1.id
         destination          = oci_core_vcn.vcn3.cidr_blocks[0]
     }
-}
 
-resource "oci_core_local_peering_gateway" "lpg1" {
-
-    compartment_id  = var.compartment_ocid
-    vcn_id          = oci_core_vcn.vcn1.id
-
-    display_name    = "LPG1-LPG2"
-}
-
-resource "oci_core_local_peering_gateway" "lpg2" {
-
-    compartment_id  = var.compartment_ocid
-    vcn_id          = oci_core_vcn.vcn2.id
-
-    display_name    = "LPG2-LPG1"
-    peer_id         = oci_core_local_peering_gateway.lpg1.id
+    route_rules {
+        network_entity_id   = oci_core_drg.drg1.id
+        destination          = oci_core_vcn.vcn4.cidr_blocks[0]
+    }
 }
 
 resource "oci_core_security_list" "publicSL1" {
@@ -210,7 +198,12 @@ resource "oci_core_security_list" "privateSL1" {
 
     ingress_security_rules {
         protocol    = "all"
-        source      = "0.0.0.0/0"
+        source      = oci_core_vcn.vcn1.cidr_blocks[0]
+    }
+
+    ingress_security_rules {
+        protocol    = "all"
+        source      = oci_core_vcn.vcn2.cidr_blocks[0]
     }
 
     egress_security_rules {
@@ -227,7 +220,12 @@ resource "oci_core_security_list" "privateSL2" {
 
     ingress_security_rules {
         protocol    = "all"
-        source      = "0.0.0.0/0"
+        source      = oci_core_vcn.vcn1.cidr_blocks[0]
+    }
+
+     ingress_security_rules {
+        protocol    = "all"
+        source      = oci_core_vcn.vcn2.cidr_blocks[0]
     }
 
     egress_security_rules {
@@ -278,6 +276,127 @@ resource "oci_core_subnet" "privatesubnet2" {
     prohibit_public_ip_on_vnic = "true"
 }
 
+################# DRG CONFIG ##############################
+
+resource "oci_core_drg" "drg1" {
+    compartment_id  = var.compartment_ocid
+    display_name    = "DRG1"
+}
+
+resource "oci_core_drg_route_distribution" "import_distributions_prod" {
+    #Required
+    distribution_type = "IMPORT"
+    drg_id = oci_core_drg.drg1.id
+
+    #Optional
+    display_name = "import_distributions_prod"
+}
+
+resource "oci_core_drg_route_distribution" "import_distributions_nonprod" {
+    #Required
+    distribution_type = "IMPORT"
+    drg_id = oci_core_drg.drg1.id
+
+    #Optional
+    display_name = "import_distributions_nonprod"
+}
+
+
+resource "oci_core_drg_route_distribution_statement" "drg_import_statement_prod" {
+    #Required
+    drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_prod.id
+    action = "ACCEPT"
+    #Optional
+    match_criteria {
+        #Required
+        match_type="DRG_ATTACHMENT_ID"
+        drg_attachment_id = oci_core_drg_attachment.drg_and_vcn1.id
+    }
+    priority = "1"
+
+}
+
+resource "oci_core_drg_route_distribution_statement" "drg_import_ipsec_statement_prod" {
+    #Required
+    drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_prod.id
+    action = "ACCEPT"
+    #Optional
+    match_criteria {
+        #Required
+        match_type="DRG_ATTACHMENT_TYPE"
+        attachment_type="IPSEC_TUNNEL"
+
+    }
+    priority = "2"
+
+}
+
+resource "oci_core_drg_route_distribution_statement" "drg_import_statement_nonprod" {
+    #Required
+    drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_nonprod.id
+    action = "ACCEPT"
+    #Optional
+    match_criteria {
+        #Required
+        match_type = "DRG_ATTACHMENT_ID"
+        drg_attachment_id = oci_core_drg_attachment.drg_and_vcn2.id
+    }
+    priority = "1"
+}
+
+resource "oci_core_drg_route_distribution_statement" "drg_import_ipsec_statement_nonprod" {
+    #Required
+    drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_nonprod.id
+    action = "ACCEPT"
+    #Optional
+    match_criteria {
+        #Required
+        match_type="DRG_ATTACHMENT_TYPE"
+        attachment_type="IPSEC_TUNNEL"
+
+    }
+    priority = "2"
+
+}
+
+resource "oci_core_drg_route_table" "drg_rt_prod" {
+    #Required
+    drg_id = oci_core_drg.drg1.id
+
+    #Optional
+    display_name = "RT_DRG_PROD"
+    import_drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_prod.id
+    is_ecmp_enabled = "true"
+}
+
+resource "oci_core_drg_route_table" "drg_rt_nonprod" {
+    #Required
+    drg_id = oci_core_drg.drg1.id
+
+    #Optional
+    display_name = "RT_DRG_NONPROD"
+    import_drg_route_distribution_id = oci_core_drg_route_distribution.import_distributions_nonprod.id
+    is_ecmp_enabled = "true"
+}
+
+resource "oci_core_drg_attachment" "drg_and_vcn1" {
+
+    drg_id = oci_core_drg.drg1.id
+    vcn_id = oci_core_vcn.vcn1.id
+    display_name = "drg_attachment_vcn1"
+    drg_route_table_id = oci_core_drg_route_table.drg_rt_prod.id
+
+}
+
+resource "oci_core_drg_attachment" "drg_and_vcn2" {
+
+    drg_id = oci_core_drg.drg1.id
+    vcn_id = oci_core_vcn.vcn2.id
+    display_name = "drg_attachment_vcn2"
+    drg_route_table_id = oci_core_drg_route_table.drg_rt_nonprod.id
+
+}
+
 resource "oci_core_cpe" "cpe-pfsense" {
 
     compartment_id = var.compartment_ocid
@@ -291,7 +410,7 @@ resource "oci_core_ipsec" "ipsec-pfsense" {
     compartment_id = var.compartment_ocid
     cpe_id = oci_core_cpe.cpe-pfsense.id
     drg_id = oci_core_drg.drg1.id
-    static_routes = oci_core_vcn.vcn3.cidr_blocks
+    static_routes = ["0.0.0.0/0"]
     display_name = "ipsec-pfsense"
 }
 
