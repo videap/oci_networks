@@ -9,7 +9,7 @@ Neste workshop, será implementada a seguinte topologia:
 
 
 Terraform:
-Este workshop conta com os arquivos terraform disponibilizados para agilizar a implementação dos recursos. Para rodar os códigos é necessário que se tenha instalado em alguma máquina local a aplicação “Terraform” que pode ser obtida neste link.
+Este workshop conta com os arquivos terraform disponibilizados para agilizar a implementação dos recursos. Para rodar os códigos é necessário que se tenha instalado em alguma máquina local a aplicação “Terraform” que pode ser obtida neste [link](https://www.terraform.io/downloads.html).
 Também é necessário ter em mãos as seguintes informações do ambiente Oracle Cloud (tenancy):
 - tenancy_ocid (obtido no console)
 - compartment_ocid (obtido no console)
@@ -153,8 +153,7 @@ Em Phase 2 Proposal, os parâmetros suportados podem ser validados na documenta�
 ### 3.8. Valide se a conexão está de pé em Status >> IPsec
 ### 3.9. Em Diagnostigs >> Ping, tente pingar a VM do outro lado.
 
-Para maiores detalhes, consulte a documentação no link:
-https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/settingupIPsec.htm#Setting_Up_VPN_Connect
+Para maiores detalhes, consulte a documentação no [link](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/settingupIPsec.htm#Setting_Up_VPN_Connect)
 
 
 
