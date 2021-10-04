@@ -50,6 +50,7 @@ resource "oci_core_vnic_attachment" "pfsense_vnic2" {
 
     create_vnic_details {
         assign_public_ip = "false"
+        private_ip = "10.2.1.3"
         display_name = "secondary_vnic_private"
         skip_source_dest_check = "true"
         subnet_id = oci_core_subnet.privatesubnet3.id
