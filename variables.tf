@@ -11,7 +11,7 @@ variable "compartment_ocid" {
 }
 
 variable "region" {
-    default = "us-ashburn-1"
+    default = "us-phoenix-1"
 }
 
 variable "ol_image_ocid" {
@@ -70,11 +70,11 @@ variable "user_ocid" {
 }
 
 variable "fingerprint" {
-  default = "bc:f7:fb:03:88:3d:14:48:01:d3:ee:d8:06:9b:0a:ec"
+  default = "9d:fa:0a:00:88:31:43:f9:cf:a4:fe:f0:fd:dd:e4:64"
 }
 
 variable "private_key_path" {
-  default = "C:/Users/vitorp/Desktop/SSH/API/apikey"
+  default = "C:\Users\vitorp\Desktop\SSH\API\apikey"
 }
 
 variable "token" {

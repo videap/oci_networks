@@ -2,7 +2,7 @@
 
 ##This branch creates:
 
-#REGION ASHBURN
+#REGION PHOENIX
 
 
 ##Compartment Advanced_Networks 

@@ -1,17 +1,17 @@
 
-#resource "oci_core_image" "pfsense_image" {
-#    #Required
-#    compartment_id = var.compartment_ocid
-#
-#    #Optional
-#    display_name   = "pfsense-image"
-#    launch_mode    = "EMULATED"
-#
-#    image_source_details {
-#        source_type    = "objectStorageUri"
-#        source_uri     = "https://objectstorage.us-ashburn-1.oraclecloud.com/n/id3kyspkytmr/b/main_bucket/o/pfsense-OCI-image"
-#    }
-#}
+resource "oci_core_image" "pfsense_image" {
+   #Required
+   compartment_id = var.compartment_ocid
+
+   #Optional
+   display_name   = "pfsense-image"
+   launch_mode    = "EMULATED"
+
+   image_source_details {
+       source_type    = "objectStorageUri"
+       source_uri     = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/3hkBGhrt-rvoXi676PexV1K1-V8IL4z1eaj8YU76Oa32A8IJUcqpkPuSRmHsyfNp/n/id3kyspkytmr/b/main_bucket/o/pfsense-OCI-image"
+   }
+}
 
 resource "oci_core_instance" "pfsense" {
     availability_domain     = data.oci_identity_availability_domain.ad.name
