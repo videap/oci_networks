@@ -4,8 +4,8 @@
 #CRIACAO DE VCN 3 e VCN 4. PFSENSE NA VCN 3 E FECHAR VPN
 
 resource "oci_core_vcn" "vcn3" {
-  cidr_blocks    =  ["10.2.0.0/16"]
-  dns_label      = "vcn3tf"
+  cidr_blocks    = var.vcn3_cidr
+  dns_label      = var.vcn3_dnslabel
   compartment_id = var.compartment_ocid
   display_name   = "vcn3-tf"
 }
@@ -133,8 +133,8 @@ resource "oci_core_route_table_attachment" "route_table3_public_attachment" {
 ########################################################
 
 resource "oci_core_vcn" "vcn4" {
-  cidr_blocks    =  ["10.3.0.0/16"]
-  dns_label      = "vcn4tf"
+  cidr_blocks    = var.vcn4_cidr
+  dns_label      = var.vcn4_dnslabel
   compartment_id = var.compartment_ocid
   display_name   = "vcn4-tf"
 }

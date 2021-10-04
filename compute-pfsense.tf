@@ -1,23 +1,27 @@
 
 resource "oci_core_image" "pfsense_image" {
-   #Required
-   compartment_id = var.compartment_ocid
+    depends_on       = [data.oci_core_images.custom_images]
+    count            = var.pfsense_image_id == "" ? 1 : 0
 
-   #Optional
-   display_name   = "pfsense-image"
-   launch_mode    = "EMULATED"
+    #Required
+    compartment_id = var.compartment_ocid
 
-   image_source_details {
-       source_type    = "objectStorageUri"
-       source_uri     = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/3hkBGhrt-rvoXi676PexV1K1-V8IL4z1eaj8YU76Oa32A8IJUcqpkPuSRmHsyfNp/n/id3kyspkytmr/b/main_bucket/o/pfsense-OCI-image"
-   }
+    #Optional
+    display_name   = "pfsense-image"
+    launch_mode    = "EMULATED"
+
+    image_source_details {
+        source_type    = "objectStorageUri"
+        #Pre auth expires on 31/12/21
+        source_uri     = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/TPXzj-BLXTeH73uR2oU9_R_c9UutIM_7GeKdddYnLn4ZqINGUMulgrtx6kw5YWV2/n/id3kyspkytmr/b/main_bucket/o/pfsense-OCI-image"
+    }
 }
 
 resource "oci_core_instance" "pfsense" {
     availability_domain     = data.oci_identity_availability_domain.ad.name
     compartment_id          = var.compartment_ocid
     shape                   = var.instance_shape
-    display_name            = "pfsense-Public-VCN3"
+    display_name            = "pfsense-Public-vcn3"
     preserve_boot_volume    = false
 
     create_vnic_details {
@@ -35,7 +39,7 @@ resource "oci_core_instance" "pfsense" {
     }
     
     source_details {
-        source_id   = "ocid1.image.oc1.iad.aaaaaaaakr4b3frbylgn7fiehfllc2rpohczgna6juchji5j57sh27zn6qra"
+        source_id   = local.custom_image_pfsense ? local.custom_image_pfsense_id : oci_core_image.pfsense_image[0].id
         source_type = "image"
     }
 }
@@ -65,9 +69,16 @@ data "oci_core_private_ips" "pfsense-ip2" {
     vnic_id = data.oci_core_vnic_attachments.vnic2-pfsense-attachment.vnic_attachments[0].vnic_id
 }
 
-output "value" {
-  value = data.oci_core_vnic_attachments.vnic2-pfsense-attachment
+data "oci_core_images" "custom_images" {
+    compartment_id = var.compartment_ocid
+    display_name = "pfsense-image"
 }
-    
 
+locals {
+    custom_image_pfsense = contains([for x in data.oci_core_images.custom_images.images: "true" if x.display_name == "pfsense-image"], "true")
+}
+
+locals {
+    custom_image_pfsense_id = var.pfsense_image_id != "" ? lookup(data.oci_core_images.custom_images.images[0], "id", "false") : var.pfsense_image_id
+}
 

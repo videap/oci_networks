@@ -4,15 +4,15 @@
 #CRIAÇAO DE VCN 1 e 2. VPN SERA FECHADA COM PFSENSE NA REDE 3
 
 resource "oci_core_vcn" "vcn1" {
-  cidr_blocks    =  ["10.0.0.0/16"]
-  dns_label      = "vcn1tf"
+  cidr_blocks    = var.vcn1_cidr
+  dns_label      = var.vcn1_dnslabel
   compartment_id = var.compartment_ocid
   display_name   = "vcn1-tf"
 }
 
 resource "oci_core_vcn" "vcn2" {
-  cidr_blocks    = ["10.1.0.0/16"]
-  dns_label      = "vcn2tf"
+  cidr_blocks    = var.vcn2_cidr
+  dns_label      = var.vcn2_dnslabel
   compartment_id = var.compartment_ocid
   display_name   = "vcn2-tf"
 }
